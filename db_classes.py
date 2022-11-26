@@ -80,15 +80,17 @@ class postgresdb:
 
     def add_client_phone(self):
         conn = self.get_connection()
-        email = input('Введите электронную почту клиента, для которого хотите добавить номер телефона:\n')
-        while not email:
-            email = input('Вы ничего не ввели.\nВведите электронную почту клиента:\n')
+        param_dict = {'1': 'name', '2': 'surname', '3': 'email'}
+        clients = self.show_client(param_dict)
+        while not clients:
+            clients = self.show_client(param_dict)
+        client_id = input('Введите id клиента для которого добавить номер телефона:\n')
         with conn.cursor() as cur:
             cur.execute('''
-                SELECT id, name, surname FROM clients WHERE email=%s;
-            ''', (email,))
-            client_id, client_name, client_surname = cur.fetchone()
-        print('Клиент:', client_name)
+                        SELECT id, name FROM clients
+                        WHERE id=%s;
+                    ''', (client_id,))
+            client_name = cur.fetchone()[1]
         client_phone = input('Введите номер телефона клиента начиная с 8\n'
                              'или нажмите enter, если передумали:\n')
         if client_phone:
@@ -198,13 +200,13 @@ class postgresdb:
     def show_client(self, parametres: dict):
         conn = self.get_connection()
         param = input('Введите параметр, по которому хотите найти клиента:\n'
-                      '1 - name;\n2 - surname;\n3 - email;\n4 - phone number.\n'
-                      '0 - показать всех клиентов\n')
+                      '1 - name;\n2 - surname;\n3 - email;\n4 - phone number;\n'
+                      '0 - показать всех клиентов.\n')
         param = parametres.get(param, 'Такого параметра нет')
         while param == 'Такого параметра нет':
             param = input('Введите параметр, по которому хотите найти клиента:\n'
-                          '1 - name;\n2 - surname;\n3 - email;\n4 - phone number.\n'
-                          '0 - показать всех клиентов\n')
+                          '1 - name;\n2 - surname;\n3 - email;\n4 - phone number;\n'
+                          '0 - показать всех клиентов.\n')
             param = parametres.get(param, 'Такого параметра нет')
         if param == 'all':
             with conn.cursor() as cur:
