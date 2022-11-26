@@ -1,14 +1,6 @@
 import psycopg2
 
 
-# def get_connection():
-#     database = input('Введите название БД\n')
-#     user = input('Введите имя пользователя\n')
-#     password = input('Введите пароль\n')
-#     conn = psycopg2.connect(database=database, user=user, password=password)
-#     return conn
-
-
 class postgresdb:
 
     def __init__(self, database_name, user_name, user_password):
